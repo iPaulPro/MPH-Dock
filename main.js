@@ -1,3 +1,6 @@
+let fs = require('fs');
+if (fs.existsSync('.env')) require('dotenv').config();
+
 const {app, BrowserWindow, ipcMain, Tray} = require('electron');
 const path = require('path');
 const AutoLaunch = require('auto-launch');

@@ -5,3 +5,9 @@ out
 # Idea
 .idea
 *.iml
+
+.DS_Store
+.swp
+
+# Per-installation files that should not be checked in
+.env
