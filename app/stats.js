@@ -1,6 +1,7 @@
-const _ = require('underscore');
-const coins = require('../app/coins.json');
-const constants = require('./constants');
+const _ = require('underscore')
+  , coins = require('../app/coins.json')
+  , fetch = require('node-fetch')
+  , constants = require('./constants');
 
 /**
  * Main model for accessing Multi Pool Miner data
@@ -33,7 +34,7 @@ class Stats {
    */
   getPrices() {
     let fsyms = Stats.getCoinCodeArray();
-    let url = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=${fsyms}&tsyms=${fiat}";
+    let url = `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${fsyms}&tsyms=${this.fiat}`;
 
     return fetch(url).then((response) => {
       if (response.status !== 200) {
@@ -47,7 +48,7 @@ class Stats {
    * Returns a Promise that resolves to the current user balances on Mining Pool Hub
    */
   getUserBalances() {
-    let url = "https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=${apiKey}";
+    let url = `https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=${this.apiKey}`;
 
     return fetch(url).then((response) => {
       if (response.status !== 200) {
@@ -62,7 +63,7 @@ class Stats {
    * @param coin The coin to retrieve dashboard statistics for.
    */
   getDashboard(coin) {
-    let url = "https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${apiKey}";
+    let url = `https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${this.apiKey}`;
 
     return fetch(url).then((response) => {
       if (response.status !== 200) {
