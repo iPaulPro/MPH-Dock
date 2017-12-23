@@ -40,7 +40,9 @@ class Stats {
   }
 
   getDashboard(coin) {
+    let apiKey = constants.API_KEY;
     let url = "https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${apiKey}";
+
     return fetch(url).then((response) => {
       if (response.status !== 200) {
         return Promise.reject(response.status);
