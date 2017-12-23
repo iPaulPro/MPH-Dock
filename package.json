@@ -1,0 +1,23 @@
+{
+  "name": "mph-dock",
+  "description": "Menu bar app for Mac OS to display stats from Mining Pool Hub",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipaulpro/mph-dock.git"
+  },
+  "version": "0.0.1",
+  "main": "main.js",
+  "license": "Apache-2.0",
+  "author": "Paul Burke (iPaulPro)",
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-packager ./ --platform=darwin --arch=x64 --out=out --icon=./icon.icns --overwrite"
+  },
+  "devDependencies": {
+    "electron-packager": "^7.3.0",
+    "electron-prebuilt": "^1.2.7"
+  },
+  "dependencies": {
+    "auto-launch": "^5.0.1"
+  }
+}
