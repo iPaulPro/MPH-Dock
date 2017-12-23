@@ -1,0 +1,112 @@
+[
+  {
+    "name": "bitcoin",
+    "code": "BTC",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "electroneum",
+    "code": "ETN",
+    "min_payout": "0.05"
+  },
+  {
+    "name": "ethereum",
+    "code": "ETH",
+    "min_payout": "0.01"
+  },
+  {
+    "name": "monero",
+    "code": "XMR",
+    "min_payout": "0.05"
+  },
+  {
+    "name": "zcash",
+    "code": "ZEC",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "vertcoin",
+    "code": "VTC",
+    "min_payout": "0.1"
+  },
+  {
+    "name": "feathercoin",
+    "code": "FTC",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "digibyte-skein",
+    "code": "DGB",
+    "min_payout": "0.01"
+  },
+  {
+    "name": "musicoin",
+    "code": "MUSIC",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "ethereum-classic",
+    "code": "ETC",
+    "min_payout": "0002"
+  },
+  {
+    "name": "siacoin",
+    "code": "SC",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "zcoin",
+    "code": "XZC",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "bitcoin-gold",
+    "code": "BTG",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "bitcoin-cash",
+    "code": "BCH",
+    "min_payout": "0.0005"
+  },
+  {
+    "name": "zencash",
+    "code": "ZEN",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "litecoin",
+    "code": "LTC",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "monacoin",
+    "code": "MONA",
+    "min_payout": "0.1"
+  },
+  {
+    "name": "groestlcoin",
+    "code": "GRS",
+    "min_payout": "0.002"
+  },
+  {
+    "name": "dash",
+    "code": "DASH",
+    "min_payout": "0.1"
+  },
+  {
+    "name": "gamecredits",
+    "code": "GAME",
+    "min_payout": "1.0"
+  },
+  {
+    "name": "verge-scrypt",
+    "code": "XVG",
+    "min_payout": "0.15"
+  },
+  {
+    "name": "zclassic",
+    "code": "ZCL",
+    "min_payout": "0.001"
+  }
+]

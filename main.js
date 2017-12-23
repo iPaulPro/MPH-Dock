@@ -1,5 +1,4 @@
 const {app, BrowserWindow, ipcMain, Tray} = require('electron');
-const dialog = require('electron').dialog;
 const path = require('path');
 const AutoLaunch = require('auto-launch');
 
@@ -26,7 +25,7 @@ const assetsDirectory = path.join(__dirname, 'assets');
 let tray = undefined;
 let window = undefined;
 
-// Don't show the app in the doc
+// Don't show the app in the dock
 app.dock.hide();
 
 app.on('ready', () => {
@@ -70,8 +69,7 @@ const createWindow = () => {
     resizable: false,
     transparent: true,
     webPreferences: {
-      // Prevents renderer process code from not running when window is
-      // hidden
+      // Prevents renderer process code from not running when window is hidden
       backgroundThrottling: false
     }
   });
