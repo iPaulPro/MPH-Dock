@@ -63,7 +63,7 @@ class Stats {
    * @param coin The coin to retrieve dashboard statistics for.
    */
   getDashboard(coin) {
-    let url = `https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${this.apiKey}`;
+    const url = `https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${this.apiKey}`;
 
     return fetch(url).then((response) => {
       if (response.status !== 200) {

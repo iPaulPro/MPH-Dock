@@ -1,19 +1,25 @@
 "use strict";
 
-let fs = require('fs');
+const fs = require('fs');
 if (fs.existsSync('.env')) require('dotenv').config();
 
 const {app, BrowserWindow, ipcMain, Tray} = require('electron');
-const path = require('path');
-const AutoLaunch = require('auto-launch');
-const Stats = require('./app/stats');
-const constants = require('./app/constants');
+
+const _ = require('underscore')
+  , path = require('path')
+  , ejs = require('ejs')
+  , AutoLaunch = require('auto-launch')
+  , Stats = require('./app/stats')
+  , coins = require('./app/coins.json')
+  , constants = require('./app/constants');
 
 let appPath = app.getPath('exe').split('.app/Content')[0] + '.app';
 let mphDockAutoLauncher = new AutoLaunch({
   name: 'MPH Dock',
   path: appPath
 });
+
+let stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
 
 mphDockAutoLauncher.enable();
 
@@ -36,28 +42,9 @@ let window = undefined;
 app.dock.hide();
 
 app.on('ready', () => {
-  console.log('ready');
+  if (constants.DEBUG)  console.log('ready');
   createTray();
   createWindow();
-
-  let stats
-  try {
-    stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
-  } catch (e) {
-    console.error(e);
-  }
-
-  if (!stats) { return }
-
-  stats.getUserBalances().then( (balances) => {
-    console.log('balances =', JSON.stringify(balances));
-
-    stats.getDashboard( (dashboard) => {
-      console.log('dashboard =', JSON.stringify(dashboard));
-    });
-  }).catch( (error) => {
-    console.error(error);
-  })
 });
 
 // Quit the app when the window is closed
@@ -65,10 +52,16 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (window === null) {
+    createWindow()
+  }
+});
+
 const createTray = () => {
   tray = new Tray(path.join(assetsDirectory, 'ic_poll.png'));
-  tray.on('right-click', toggleWindow);
-  tray.on('double-click', toggleWindow);
   tray.on('click', toggleWindow);
 };
 
@@ -99,6 +92,7 @@ const createWindow = () => {
       backgroundThrottling: false
     }
   });
+
   window.loadURL(`file://${path.join(__dirname, 'public/index.html')}`);
 
   // Hide the window when it loses focus
@@ -128,8 +122,13 @@ ipcMain.on('show-window', () => {
   showWindow();
 });
 
-ipcMain.on('mph-stats-updated', (event, success) => {
-  // Update icon and title in tray
-  tray.setTitle(`$10.00`);
-  tray.setImage(path.join(assetsDirectory, 'ic_poll.png'));
+ipcMain.on('mph-stats-updated', (event, result) => {
+  let dashboard = result.dashboard;
+  let balance = Number(dashboard.balance.confirmed).toFixed(4);
+  let coin = result.coin;
+  tray.setTitle(balance + " " + coin.code);
+});
+
+ipcMain.on('error', (event, error) => {
+
 });
