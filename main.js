@@ -61,7 +61,7 @@ app.on('activate', () => {
 });
 
 const createTray = () => {
-  tray = new Tray(path.join(assetsDirectory, 'ic_poll.png'));
+  tray = new Tray(path.join(assetsDirectory, 'ic_miner.png'));
   tray.on('click', toggleWindow);
 };
 
