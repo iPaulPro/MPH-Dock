@@ -3,7 +3,9 @@
 
 * {
     font-family: 'Roboto Mono', monospace;
+    color: white;
 }
+
 /* Variables */
 :root {
     --background-color: #f5f5f4;
@@ -62,7 +64,9 @@
 }
 
 .window-content {
+    width: 360px;
     background-color: black;
+    overflow: auto;
 }
 
 .tab-group {
@@ -118,7 +122,7 @@ td {
 }
 
 tbody tr:first-child {
-    background-color: #255425;
+    background-color: #33691E;
 }
 
 th:last-child,
@@ -135,6 +139,15 @@ td a {
 
 td a:hover {
     color: #5bd46d;
+}
+
+.container {
+    position: relative;
+    overflow: auto;
+}
+
+.row {
+    width: 100%;
 }
 
 .table-striped tr:nth-child(even) {
@@ -161,4 +174,50 @@ td a:hover {
 .footer-link a {
     color: rgba(255,255,255,0.5);
     cursor: pointer;
+}
+
+#overview {
+   min-height: 80px;
+}
+
+#balance {
+    color: #8BC34A;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 24px;
+}
+
+#coin {
+    height: 24px;
+    clear: right;
+    line-height: 24px;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+#balance_label {
+    color: #cccccc;
+    font-weight: 400;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    clear:both;
+}
+
+#column-left {
+    width: 70%;
+}
+
+#column-right {
+    width: 30%;
+    text-align: right;
+}
+
+#today_label {
+    color: #cccccc;
+    font-size: 12px;
+}
+
+.hint {
+    color: #cccccc;
 }

@@ -50,6 +50,9 @@ class Stats {
   getUserBalances() {
     let url = `https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=${this.apiKey}`;
 
+    // const dummyBalances = require('../dummy/getuserallbanaces.json');
+    // return Promise.resolve(dummyBalances);
+
     return fetch(url).then((response) => {
       if (response.status !== 200) {
         return Promise.reject(response.status);
@@ -64,6 +67,9 @@ class Stats {
    */
   getDashboard(coin) {
     const url = `https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${this.apiKey}`;
+
+    // const dummyDashboard = require('../dummy/getdashboarddata.json');
+    // return Promise.resolve(dummyDashboard);
 
     return fetch(url).then((response) => {
       if (response.status !== 200) {

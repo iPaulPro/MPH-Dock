@@ -17,11 +17,23 @@
     </header>
 
     <div class="window-content">
-        <div id="balances"></div>
-    </div>
+        <div class="container">
+            <div id="overview" class="row padded padded-top-more">
+                <div id="column-left" class="pull-left">
+                    <div id="balance" class="pull-left">0</div>
+                    <div id="coin" class="pull-left"></div>
+                    <div id="balance_label">Account balance</div>
+                </div>
+                <div id="column-right" class="pull-right">
+                    <div id="today_label">Past 24 hours</div>
+                    <div id="today">0</div>
+                </div>
+            </div> <!-- #overview -->
+            <div id="balances" class="row pull-left"></div>
+        </div> <!-- .container -->
+    </div> <!-- .window-content -->
 
     <footer class="toolbar toolbar-footer">
-
         <div class="footer-link">
             Made by <a href="http://twitter.com/ipaulpro">Paul Burke</a>
         </div>

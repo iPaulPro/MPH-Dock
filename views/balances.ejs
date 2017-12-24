@@ -13,12 +13,12 @@
         <td><a href="https://<%= balance.coin.name %>.miningpoolhub.com/index.php?page=dashboard"><%= balance.coin.code %></a></td>
         <td><%= balance.confirmed %>
           <% if (balance.unconfirmed !== 0) { %>
-            <br>(<%= balance.unconfirmed %>)
+          <br><span class="hint">(<%= balance.unconfirmed %>)</span>
           <% } %>
         </td>
         <td><%= balance.ae_confirmed %>
           <% if (balance.ae_unconfirmed !== 0) { %>
-          <br>(<%= balance.ae_unconfirmed %>)
+          <br><span class="hint">(<%= balance.ae_unconfirmed %>)</span>
           <% } %></td>
         <td><%= balance.exchange %></td>
       </tr>

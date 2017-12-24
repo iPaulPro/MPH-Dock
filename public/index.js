@@ -18,7 +18,7 @@ const interval = 10 * 60 * 1000;
 setInterval(update, interval);
 
 function init() {
-  if (constants.DEBUG) logger.log('init');
+  if (constants.DEBUG) console.log('init');
   update();
 }
 
@@ -34,6 +34,10 @@ function update() {
 
     let data = dashboard.getdashboarddata.data;
     ipcRenderer.send("mph-stats-updated", {coin: coin, dashboard: data});
+
+    document.getElementById('balance').textContent = data.balance.confirmed;
+    document.getElementById('coin').textContent = coin.code;
+    document.getElementById('today').textContent = Number(data.recent_credits_24hours.amount).toFixed(8);
 
     return stats.getUserBalances();
 

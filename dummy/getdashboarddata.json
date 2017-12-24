@@ -1,0 +1,140 @@
+{
+	"getdashboarddata": {
+		"version": "1.0.0",
+		"runtime": 150.20799636841,
+		"data": {
+			"raw": {
+				"personal": {
+					"hashrate": 0
+				},
+				"pool": {
+					"hashrate": 13841156691.739
+				},
+				"network": {
+					"hashrate": 126501022171.58,
+					"esttimeperblock": 14
+				}
+			},
+			"personal": {
+				"hashrate": 0,
+				"sharerate": 0,
+				"sharedifficulty": 0,
+				"shares": {
+					"valid": null,
+					"invalid": null,
+					"invalid_percent": 0,
+					"unpaid": 0
+				},
+				"estimates": {
+					"block": 0,
+					"fee": 0,
+					"donation": 0,
+					"payout": 0
+				}
+			},
+			"balance": {
+				"confirmed": 0.00787538,
+				"unconfirmed": 0,
+				"orphaned": 0
+			},
+			"balance_for_auto_exchange": {
+				"confirmed": 0,
+				"unconfirmed": 0,
+				"orphaned": 0
+			},
+			"balance_on_exchange": 0,
+			"recent_credits_24hours": {
+				"amount": 0.0019705503187147
+			},
+			"recent_credits": [
+				{
+					"date": "2017-12-23",
+					"amount": 0
+				},
+				{
+					"date": "2017-12-22",
+					"amount": 0.0030517289084919
+				},
+				{
+					"date": "2017-12-21",
+					"amount": 0.0048236526388509
+				},
+				{
+					"date": "2017-12-20",
+					"amount": 0
+				},
+				{
+					"date": "2017-12-19",
+					"amount": 2.25e-05
+				},
+				{
+					"date": "2017-12-18",
+					"amount": 0.00030709
+				},
+				{
+					"date": "2017-12-17",
+					"amount": 0
+				},
+				{
+					"date": "2017-12-16",
+					"amount": 5.638e-05
+				},
+				{
+					"date": "2017-12-15",
+					"amount": 0
+				},
+				{
+					"date": "2017-12-14",
+					"amount": 0
+				},
+				{
+					"date": "2017-12-13",
+					"amount": 0.00073578
+				},
+				{
+					"date": "2017-12-12",
+					"amount": 0.00026611
+				},
+				{
+					"date": "2017-12-11",
+					"amount": 0
+				},
+				{
+					"date": "2017-12-10",
+					"amount": 1.243e-05
+				}
+			],
+			"pool": {
+				"info": {
+					"name": "Ethereum (ETH) Mining Pool Hub",
+					"currency": "ETH"
+				},
+				"workers": 105294,
+				"hashrate": 13841.156691739,
+				"shares": {
+					"valid": null,
+					"invalid": null,
+					"invalid_percent": 0,
+					"estimated": 105560679,
+					"progress": 0
+				},
+				"price": "",
+				"difficulty": 16,
+				"target_bits": 20
+			},
+			"system": {
+				"load": [
+					12.55,
+					8.04,
+					9.79
+				]
+			},
+			"network": {
+				"hashrate": 126.50102217158,
+				"difficulty": "1771014310402080",
+				"block": "4781497",
+				"esttimeperblock": 14
+			}
+		}
+	}
+}
