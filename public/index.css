@@ -65,6 +65,49 @@
     background-color: black;
 }
 
+table {
+    width: 100%;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+thead {
+    background-color: #666666;
+}
+
+tbody {
+    background-color: #333333;
+}
+
+th {
+    font-weight: normal;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+}
+
+th,
+td {
+    width: 100%;
+    padding: 6px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+
+tbody tr:first-child {
+    background-color: #255425;
+}
+
+th:last-child,
+td:last-child {
+    border-right: 0;
+}
+
+.table-striped tr:nth-child(even) {
+    background-color: #111111;
+}
+
 .summary {
     width: 100%;
     text-align: center;
