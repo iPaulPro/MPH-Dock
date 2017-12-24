@@ -10,7 +10,7 @@
   <tbody>
     <% for (let balance of balances) { %>
       <tr>
-        <td><%= balance.coin.code %></td>
+        <td><a href="https://<%= balance.coin.name %>.miningpoolhub.com/index.php?page=dashboard"><%= balance.coin.code %></a></td>
         <td><%= balance.confirmed %>
           <% if (balance.unconfirmed !== 0) { %>
             <br>(<%= balance.unconfirmed %>)

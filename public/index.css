@@ -65,6 +65,28 @@
     background-color: black;
 }
 
+.tab-group {
+    border-top: 1px solid rgba(255,255,255,0);
+    border-bottom: none;
+}
+.tab-item {
+    background: black;
+    font-size: 14px;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    transition: 0.2s;
+    color: white;
+}
+
+.tab-item:hover {
+    background: #171717;
+}
+
+.tab-item.active {
+    background: black;
+    border-bottom: 1px solid white;
+}
+
 table {
     width: 100%;
     font-size: 12px;
@@ -81,7 +103,7 @@ tbody {
 
 th {
     font-weight: normal;
-    border-right: 1px solid #333333;
+    border-right: none;
     border-bottom: 1px solid #333333;
 }
 
@@ -102,6 +124,17 @@ tbody tr:first-child {
 th:last-child,
 td:last-child {
     border-right: 0;
+}
+
+td a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+td a:hover {
+    color: #5bd46d;
 }
 
 .table-striped tr:nth-child(even) {
@@ -127,4 +160,5 @@ td:last-child {
 
 .footer-link a {
     color: rgba(255,255,255,0.5);
+    cursor: pointer;
 }
