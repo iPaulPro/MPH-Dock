@@ -10,7 +10,6 @@ const _ = require('underscore')
   , path = require('path')
   , ejs = require('ejs')
   , AutoLaunch = require('auto-launch')
-  , Stats = require('./app/stats')
   , coins = require('./app/coins.json')
   , constants = require('./app/constants');
 
@@ -19,8 +18,6 @@ let mphDockAutoLauncher = new AutoLaunch({
   name: 'MPH Dock',
   path: appPath
 });
-
-let stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
 
 mphDockAutoLauncher.enable();
 
@@ -43,7 +40,6 @@ let window = undefined;
 app.dock.hide();
 
 app.on('ready', () => {
-  if (constants.DEBUG)  console.log('ready');
   createTray();
   createWindow();
 });
@@ -68,6 +64,7 @@ const createTray = () => {
     if (constants.DEBUG) { window.webContents.openDevTools() }
   });
 };
+
 const createWindow = () => {
   window = new BrowserWindow({
     width: 360,
@@ -91,10 +88,19 @@ const createWindow = () => {
       window.hide();
     }
   });
+
+  window.on('show', () => {
+    tray.setHighlightMode('always')
+  });
+
+  window.on('hide', () => {
+    tray.setHighlightMode('never')
+  });
 };
 
 const getWindowPosition = (trayBounds) => {
-  const windowBounds = window.getBounds()
+  const windowBounds = window.getBounds();
+
   // Center window horizontally below the tray icon
   const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2));
 
