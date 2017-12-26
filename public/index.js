@@ -2,91 +2,24 @@
 
 const {ipcRenderer, shell} = require('electron');
 
-const _ = require('underscore')
-  , fs = require('fs')
-  , path = require("path")
+const path = require("path")
   , ejs = require('ejs')
-  , moment = require('moment')
-  , Stats = require('../app/stats')
-  , coins = require('../app/coins.json')
-  , constants = require('../app/constants');
+  , moment = require('moment');
 
-const nodeConsole = require('console')
-  , logger = new nodeConsole.Console(process.stdout, process.stderr);
-
-// Refresh every 10 minutes
-const interval = 10 * 60 * 1000;
-setInterval(update, interval);
+let update = function () {
+  ipcRenderer.send('update');
+};
 
 function init() {
-  if (constants.DEBUG) console.log('init');
+  console.log('init');
   update();
 }
-
-function update() {
-  let stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
-  if (constants.DEBUG) logger.log('update stats=', JSON.stringify(stats));
-
-  let coin = _.find(coins, (coin) => { return coin.code === constants.AUTO_EXCHANGE });
-  if (constants.DEBUG) logger.log('update coin=', JSON.stringify(coin));
-
-  stats.getDashboard(coin.name).then( (dashboard) => {
-    if (constants.DEBUG) logger.log('update : dashboard =', JSON.stringify(dashboard));
-
-    let data = dashboard.getdashboarddata.data;
-    ipcRenderer.send("mph-stats-updated", {coin: coin, dashboard: data});
-
-    document.getElementById('balance').textContent = data.balance.confirmed;
-    document.getElementById('coin').textContent = coin.code;
-    document.getElementById('today').textContent = Number(data.recent_credits_24hours.amount).toFixed(8);
-
-    let time = moment().format('h:mm a');
-    document.getElementById('footer-link').textContent = `Last update at ${time}`;
-
-    return stats.getUserBalances();
-
-  }).then( (balances) => {
-    if (constants.DEBUG) logger.log('update : balances =', JSON.stringify(balances));
-
-    let data = balances.getuserallbalances.data;
-    updateView(data);
-
-  }).catch( (error) => {
-    ipcRenderer.send("on-error", { error: error });
-    if (constants.DEBUG) logger.error(error);
-  });
-}
-
-const updateView = (balances) => {
-  let data = { balances: balances };
-
-  data.balances = _.chain(data.balances)
-    .map((balance) => {
-      balance.coin = _.find(coins, (coin) => {
-        return balance.coin === coin.name;
-      });
-      return balance;
-    })
-    .sortBy((balance) => { return balance.coin.code })
-    .sortBy((balance) => { return balance.coin.code !== constants.AUTO_EXCHANGE})
-    .value();
-
-  logger.log('data', JSON.stringify(data));
-
-  // let options = {root: path.join(__dirname, '..', 'views')};
-  let template = path.join(__dirname, '..', 'views/balances.ejs');
-  ejs.renderFile(template, data, function (err, str) {
-    if (err) throw err;
-    document.getElementById('balances').innerHTML = str;
-  });
-
-};
 
 // Update when loaded
 document.addEventListener('DOMContentLoaded', init);
 
 document.addEventListener('click', (event) => {
-  if (constants.DEBUG) logger.log('click');
+  console.log('click');
   if (event.target.href) {
     // Open links in external browser
     shell.openExternal(event.target.href);
@@ -98,6 +31,38 @@ document.addEventListener('click', (event) => {
   }
 });
 
-ipcRenderer.on('window-shown', (event) => {
-  console.log('window shown');
+ipcRenderer.on('on-error', (event, error) => {
+  console.error('on-error', error);
+  // TODO
+});
+
+let updateDashboardView = function (dashboard, coin) {
+  let data = { dashboard: dashboard, coin: coin };
+  let template = path.join(__dirname, 'views', 'dashboard.ejs');
+  ejs.renderFile(template, data, function (err, html) {
+    if (err) throw err;
+    document.getElementById('dashboard').innerHTML = html;
+
+    let time = moment().format('h:mm a');
+    document.getElementById('footer-link').textContent = `Last update at ${time}`;
+  });
+};
+
+ipcRenderer.on('dashboard-loaded', (event, coin, dashboard) => {
+  console.log('dashboard-loaded coin = %s, dashboard = %s', coin, JSON.stringify(dashboard));
+  updateDashboardView(dashboard, coin);
+});
+
+let updateBalancesView = (balances) => {
+  let data = { balances: balances };
+  let template = path.join(__dirname, 'views', 'balances.ejs');
+  ejs.renderFile(template, data, function (err, html) {
+    if (err) throw err;
+    document.getElementById('balances').innerHTML = html;
+  });
+};
+
+ipcRenderer.on('balances-loaded', (event, balances) => {
+  console.log('balances-loaded balances = %s', JSON.stringify(balances));
+  updateBalancesView(balances);
 });

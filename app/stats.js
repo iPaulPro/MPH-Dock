@@ -1,7 +1,6 @@
-const _ = require('underscore')
-  , coins = require('../app/coins.json')
-  , fetch = require('node-fetch')
-  , constants = require('./constants');
+"use strict";
+
+const fetch = require('node-fetch');
 
 /**
  * Main model for accessing Multi Pool Miner data
@@ -22,19 +21,13 @@ class Stats {
   }
 
   /**
-   * @return {Array} The "code" fields from coins.json
-   */
-  static getCoinCodeArray() {
-    return _.pluck(coins, "code");
-  }
-
-  /**
    * Returns a Promise that resolves to the current spot prices for the symbols in coins.json,
    * provided by CryptoCompare API.
+   *
+   * @param coinCodeArray An array of codes for coins to include in the price lookup
    */
-  getPrices() {
-    let fsyms = Stats.getCoinCodeArray();
-    let url = `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${fsyms}&tsyms=${this.fiat}`;
+  getPrices(coinCodeArray) {
+    let url = `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${coinCodeArray}&tsyms=${this.fiat}`;
 
     return fetch(url).then((response) => {
       if (response.status !== 200) {
@@ -49,10 +42,6 @@ class Stats {
    */
   getUserBalances() {
     let url = `https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=${this.apiKey}`;
-
-    // const dummyBalances = require('../dummy/getuserallbanaces.json');
-    // return Promise.resolve(dummyBalances);
-
     return fetch(url).then((response) => {
       if (response.status !== 200) {
         return Promise.reject(response.status);
@@ -66,11 +55,9 @@ class Stats {
    * @param coin The coin to retrieve dashboard statistics for.
    */
   getDashboard(coin) {
+    if (!coin) { coin = this.autoExchange }
+
     const url = `https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${this.apiKey}`;
-
-    // const dummyDashboard = require('../dummy/getdashboarddata.json');
-    // return Promise.resolve(dummyDashboard);
-
     return fetch(url).then((response) => {
       if (response.status !== 200) {
         return Promise.reject(response.status);

@@ -10,8 +10,10 @@ const _ = require('underscore')
   , path = require('path')
   , ejs = require('ejs')
   , AutoLaunch = require('auto-launch')
-  , coins = require('./app/coins.json')
-  , constants = require('./app/constants');
+  , absoluteAppPath = app.getAppPath()
+  , Stats = require(path.resolve(absoluteAppPath,'./app/stats'))
+  , coins = require(path.resolve(absoluteAppPath, './app/coins.json'))
+  , constants = require(path.resolve(absoluteAppPath, './app/constants'));
 
 let appPath = app.getPath('exe').split('.app/Content')[0] + '.app';
 let mphDockAutoLauncher = new AutoLaunch({
@@ -40,8 +42,14 @@ let window = undefined;
 app.dock.hide();
 
 app.on('ready', () => {
+  if (constants.DEBUG) console.log('ready : appPath = %s, coins = %s, constants = %s', absoluteAppPath, JSON.stringify(coins), JSON.stringify(constants));
+
   createTray();
   createWindow();
+
+  // Refresh every 10 minutes
+  const interval = 10 * 60 * 1000;
+  setInterval(update, interval);
 });
 
 // Quit the app when the window is closed
@@ -125,13 +133,47 @@ const toggleWindow = (event, bounds) => {
   }
 };
 
-ipcMain.on('mph-stats-updated', (event, result) => {
-  let dashboard = result.dashboard;
-  let balance = Number(dashboard.balance.confirmed).toFixed(4);
-  let coin = result.coin;
-  tray.setTitle(balance + " " + coin.code);
-});
+function update() {
+  let stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
+  if (constants.DEBUG) console.log('update : stats=', JSON.stringify(stats));
 
-ipcMain.on('error', (event, error) => {
+  let coin = _.find(coins, (coin) => { return coin.code === constants.AUTO_EXCHANGE });
+  if (constants.DEBUG) console.log('update : coin=', JSON.stringify(coin));
 
+  stats.getDashboard(coin.name).then( (dashboard) => {
+    if (constants.DEBUG) console.log('update : dashboard =', JSON.stringify(dashboard));
+
+    let data = dashboard.getdashboarddata.data;
+    let balance = Number(data.balance.confirmed).toFixed(4);
+
+    tray.setTitle(balance + " " + coin.code);
+    window.webContents.send('dashboard-loaded', coin, data);
+
+    return stats.getUserBalances();
+
+  }).then( (balances) => {
+    if (constants.DEBUG) console.log('update : balances =', JSON.stringify(balances));
+
+    let data = _.chain(balances.getuserallbalances.data)
+      .map((balance) => {
+        balance.coin = _.find(coins, (coin) => {
+          return balance.coin === coin.name;
+        });
+        return balance;
+      })
+      .sortBy((balance) => { return balance.coin.code })
+      .sortBy((balance) => { return balance.coin.code !== constants.AUTO_EXCHANGE})
+      .value();
+
+    window.webContents.send('balances-loaded', data);
+
+  }).catch( (error) => {
+    window.webContents.send("on-error", { error: error });
+    if (constants.DEBUG) console.error(error);
+  });
+}
+
+ipcMain.on('update', (event) => {
+  if (constants.DEBUG) console.log('on update');
+  update();
 });

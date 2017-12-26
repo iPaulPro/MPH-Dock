@@ -1,0 +1,9 @@
+<div id="column-left" class="pull-left">
+  <div id="balance" class="pull-left"><%= dashboard.balance.confirmed %></div>
+  <div id="coin" class="pull-left"><% coin.code %></div>
+  <div id="balance_label">Account balance</div>
+</div>
+<div id="column-right" class="pull-right">
+  <div id="today_label">Past 24 hours</div>
+  <div id="today"><%= Number(dashboard.recent_credits_24hours.amount).toFixed(8) %></div>
+</div>
