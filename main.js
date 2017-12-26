@@ -10,46 +10,55 @@ const _ = require('underscore')
   , path = require('path')
   , ejs = require('ejs')
   , AutoLaunch = require('auto-launch')
-  , absoluteAppPath = app.getAppPath()
-  , Stats = require(path.resolve(absoluteAppPath,'./app/stats'))
-  , coins = require(path.resolve(absoluteAppPath, './app/coins.json'))
-  , constants = require(path.resolve(absoluteAppPath, './app/constants'));
-
-let appPath = app.getPath('exe').split('.app/Content')[0] + '.app';
-let mphDockAutoLauncher = new AutoLaunch({
-  name: 'MPH Dock',
-  path: appPath
-});
-
-mphDockAutoLauncher.enable();
-
-mphDockAutoLauncher.isEnabled()
-  .then(function (isEnabled) {
-    if (isEnabled) {
-      return;
-    }
-    mphDockAutoLauncher.enable();
-  })
-  .catch(function (err) {
-  });
-
-const assetsDirectory = path.join(__dirname, 'assets');
+  , Stats = require('./app/data/stats')
+  , coins = require('./app/data/coins.json')
+  , constants = require('./app/data/constants');
 
 let tray = undefined;
 let window = undefined;
+let timer;
 
-// Don't show the app in the dock
-app.dock.hide();
+let init = () => {
+  let appPath = app.getPath('exe').split('.app/Content')[0] + '.app';
+  let mphDockAutoLauncher = new AutoLaunch({
+    name: 'MPH Dock',
+    path: appPath
+  });
+
+  mphDockAutoLauncher.enable();
+
+  mphDockAutoLauncher.isEnabled()
+    .then(function (isEnabled) {
+      if (isEnabled) {
+        return;
+      }
+      mphDockAutoLauncher.enable();
+    })
+    .catch(function (err) {
+    });
+
+  // Don't show the app in the dock
+  app.dock.hide();
+};
+
+init();
+
+/**
+ * Refresh every 10 minutes
+ */
+let setRefreshTimer = () => {
+  if (timer) { clearInterval(timer) }
+
+  const interval = 10 * 60 * 1000;
+  timer = setInterval(update, interval);
+};
 
 app.on('ready', () => {
-  if (constants.DEBUG) console.log('ready : appPath = %s, coins = %s, constants = %s', absoluteAppPath, JSON.stringify(coins), JSON.stringify(constants));
+  if (constants.DEBUG) console.log('ready : coins = %s, constants = %s', JSON.stringify(coins), JSON.stringify(constants));
 
   createTray();
   createWindow();
-
-  // Refresh every 10 minutes
-  const interval = 10 * 60 * 1000;
-  setInterval(update, interval);
+  setRefreshTimer();
 });
 
 // Quit the app when the window is closed
@@ -66,6 +75,7 @@ app.on('activate', () => {
 });
 
 const createTray = () => {
+  let assetsDirectory = path.join(__dirname, 'assets');
   tray = new Tray(path.join(assetsDirectory, 'ic_miner.png'));
   tray.on('click', toggleWindow);
   tray.on('right-click', () => {
@@ -88,7 +98,7 @@ const createWindow = () => {
     }
   });
 
-  window.loadURL(`file://${path.join(__dirname, 'public/index.html')}`);
+  window.loadURL(`file://${path.join(__dirname, 'app', 'index.html')}`);
 
   // Hide the window when it loses focus
   window.on('blur', () => {
@@ -161,11 +171,20 @@ function update() {
         });
         return balance;
       })
-      .sortBy((balance) => { return balance.coin.code })
-      .sortBy((balance) => { return balance.coin.code !== constants.AUTO_EXCHANGE})
+      .sortBy((balance) => {
+        return balance.coin.code
+      })
+      .sortBy((balance) => {
+        return balance.coin.code !== constants.AUTO_EXCHANGE
+      })
       .value();
 
     window.webContents.send('balances-loaded', data);
+
+  }).then( () => {
+
+    window.webContents.send('update-complete');
+    setRefreshTimer();
 
   }).catch( (error) => {
     window.webContents.send("on-error", { error: error });

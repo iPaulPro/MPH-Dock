@@ -3,7 +3,17 @@
 
 * {
     font-family: 'Roboto Mono', monospace;
-    color: white;
+    color: #eeeeee;
+}
+
+::-webkit-scrollbar {
+    background-color: black;
+    width: .6em
+}
+
+::-webkit-scrollbar-thumb:window-inactive,
+::-webkit-scrollbar-thumb {
+    background:  #666666;
 }
 
 /* Variables */
@@ -95,35 +105,31 @@
 table {
     width: 100%;
     font-size: 12px;
-    color: #ffffff;
+    color: #eeeeee;
 }
 
 thead {
-    background-color: #666666;
+    background-color: #333333;
 }
 
 tbody {
-    background-color: #333333;
+    background-color: #111111;
 }
 
 th {
     font-weight: normal;
     border-right: none;
-    border-bottom: 1px solid #333333;
+    border-bottom: 1px solid #111111;
 }
 
 th,
 td {
     width: 100%;
-    padding: 6px 8px;
+    padding: 6px 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.4;
-}
-
-tbody tr:first-child {
-    background-color: #33691E;
 }
 
 th:last-child,
@@ -153,7 +159,7 @@ td a:hover {
 }
 
 .table-striped tr:nth-child(even) {
-    background-color: #111111;
+    background-color: #222222;
 }
 
 .summary {

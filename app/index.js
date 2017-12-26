@@ -42,9 +42,6 @@ let updateDashboardView = function (dashboard, coin) {
   ejs.renderFile(template, data, function (err, html) {
     if (err) throw err;
     document.getElementById('dashboard').innerHTML = html;
-
-    let time = moment().format('h:mm a');
-    document.getElementById('footer-link').textContent = `Last update at ${time}`;
   });
 };
 
@@ -65,4 +62,19 @@ let updateBalancesView = (balances) => {
 ipcRenderer.on('balances-loaded', (event, balances) => {
   console.log('balances-loaded balances = %s', JSON.stringify(balances));
   updateBalancesView(balances);
+});
+
+let updateFooter = () => {
+  let time = moment().format('h:mm a');
+  let data = {lastUpdate: time};
+  let template = path.join(__dirname, 'views', 'footer.ejs');
+  ejs.renderFile(template, data, function (err, html) {
+    if (err) throw err;
+    document.getElementById('footer').innerHTML = html;
+  });
+};
+
+ipcRenderer.on('update-complete', (event) => {
+  console.log('update complete');
+  updateFooter();
 });
