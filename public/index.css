@@ -163,7 +163,7 @@ td a:hover {
     color: var(--text-color);
 }
 
-.footer-link {
+#footer-link {
     padding-top: 8px;
     padding-left: 10px;
     font-size: calc(var(--font-size) - 4px);
@@ -171,7 +171,7 @@ td a:hover {
     color: #666;
 }
 
-.footer-link a {
+#footer-link a {
     color: rgba(255,255,255,0.5);
     cursor: pointer;
 }

@@ -1,5 +1,6 @@
 {
   "name": "mph-dock",
+  "productName": "MPH Dock",
   "description": "Menu bar app for Mac OS to display stats from Mining Pool Hub",
   "repository": {
     "type": "git",

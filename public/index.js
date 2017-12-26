@@ -6,6 +6,7 @@ const _ = require('underscore')
   , fs = require('fs')
   , path = require("path")
   , ejs = require('ejs')
+  , moment = require('moment')
   , Stats = require('../app/stats')
   , coins = require('../app/coins.json')
   , constants = require('../app/constants');
@@ -38,6 +39,9 @@ function update() {
     document.getElementById('balance').textContent = data.balance.confirmed;
     document.getElementById('coin').textContent = coin.code;
     document.getElementById('today').textContent = Number(data.recent_credits_24hours.amount).toFixed(8);
+
+    let time = moment().format('h:mm a');
+    document.getElementById('footer-link').textContent = `Last update at ${time}`;
 
     return stats.getUserBalances();
 
@@ -92,4 +96,8 @@ document.addEventListener('click', (event) => {
   } else if (event.target.classList.contains('js-quit-action')) {
     window.close();
   }
+});
+
+ipcRenderer.on('window-shown', (event) => {
+  console.log('window shown');
 });
