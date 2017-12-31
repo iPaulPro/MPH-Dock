@@ -16,7 +16,6 @@ const _ = require('underscore')
 
 let tray = undefined;
 let window = undefined;
-let timer;
 
 let init = () => {
   let appPath = app.getPath('exe').split('.app/Content')[0] + '.app';
@@ -43,22 +42,11 @@ let init = () => {
 
 init();
 
-/**
- * Refresh every 10 minutes
- */
-let setRefreshTimer = () => {
-  if (timer) { clearInterval(timer) }
-
-  const interval = 10 * 60 * 1000;
-  timer = setInterval(update, interval);
-};
-
 app.on('ready', () => {
   if (constants.DEBUG) console.log('ready : coins = %s, constants = %s', JSON.stringify(coins), JSON.stringify(constants));
 
   createTray();
   createWindow();
-  setRefreshTimer();
 });
 
 // Quit the app when the window is closed
@@ -184,7 +172,6 @@ function update() {
   }).then( () => {
 
     window.webContents.send('update-complete');
-    setRefreshTimer();
 
   }).catch( (error) => {
     window.webContents.send("on-error", { error: error });

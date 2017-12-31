@@ -6,17 +6,17 @@
     "type": "git",
     "url": "git+https://github.com/ipaulpro/mph-dock.git"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "main.js",
   "license": "Apache-2.0",
   "author": "Paul Burke (iPaulPro)",
   "scripts": {
     "start": "electron .",
-    "package": "electron-packager ./ --platform=darwin --arch=x64 --out=out --icon=./icon.icns --overwrite"
+    "package": "electron-packager ./ --platform=darwin --arch=x64 --out=out --icon=./icon.icns --overwrite --electron-version=1.7.10"
   },
   "devDependencies": {
-    "electron-packager": "^7.3.0",
-    "electron-prebuilt": "^1.2.7"
+    "electron-packager": "10.1.0",
+    "electron": "1.7.10"
   },
   "dependencies": {
     "auto-launch": "^5.0.1",

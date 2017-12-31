@@ -6,12 +6,26 @@ const path = require("path")
   , ejs = require('ejs')
   , moment = require('moment');
 
+let timer;
+
 let update = function () {
   ipcRenderer.send('update');
 };
 
+/**
+ * Refresh every 10 minutes
+ */
+let setRefreshTimer = () => {
+  if (timer) { clearInterval(timer) }
+
+  const interval = 10 * 60 * 1000;
+  timer = setInterval(update, interval);
+};
+
 function init() {
   console.log('init');
+
+  setRefreshTimer();
   update();
 }
 
@@ -25,6 +39,7 @@ document.addEventListener('click', (event) => {
     shell.openExternal(event.target.href);
     event.preventDefault();
   } else if (event.target.classList.contains('js-refresh-action')) {
+    setRefreshTimer();
     update();
   } else if (event.target.classList.contains('js-quit-action')) {
     window.close();
