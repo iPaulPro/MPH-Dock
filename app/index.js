@@ -8,7 +8,7 @@ const path = require("path")
 
 let timer;
 
-let update = function () {
+let update = () => {
   ipcRenderer.send('update');
 };
 
@@ -22,12 +22,27 @@ let setRefreshTimer = () => {
   timer = setInterval(update, interval);
 };
 
-function init() {
+let init = () => {
   console.log('init');
+
+  let tabs = document.getElementsByClassName("tab-group")[0];
+  let balances = document.getElementById('balances');
+  let workers = document.getElementById('workers');
+  let credits = document.getElementById('credits');
+
+  balances.style.display = "inherit";
+
+  tabs.addEventListener("tabActivate", (event) => {
+    let position = event.detail.tabPosition;
+
+    balances.style.display = position === 0 ? "inherit" : "none";
+    workers.style.display = position === 1 ? "inherit" : "none";
+    credits.style.display = position === 2 ? "inherit" : "none";
+  }, false);
 
   setRefreshTimer();
   update();
-}
+};
 
 // Update when loaded
 document.addEventListener('DOMContentLoaded', init);
@@ -46,12 +61,7 @@ document.addEventListener('click', (event) => {
   }
 });
 
-ipcRenderer.on('on-error', (event, error) => {
-  console.error('on-error', error);
-  // TODO
-});
-
-let updateDashboardView = function (dashboard, coin) {
+let updateDashboardView = (dashboard, coin) => {
   let data = { dashboard: dashboard, coin: coin };
   let template = path.join(__dirname, 'views', 'dashboard.ejs');
   ejs.renderFile(template, data, function (err, html) {
@@ -60,10 +70,15 @@ let updateDashboardView = function (dashboard, coin) {
   });
 };
 
-ipcRenderer.on('dashboard-loaded', (event, coin, dashboard) => {
-  console.log('dashboard-loaded coin = %s, dashboard = %s', coin, JSON.stringify(dashboard));
-  updateDashboardView(dashboard, coin);
-});
+let updateCreditsView = (dashboard) => {
+  let credits = dashboard.recent_credits;
+  let data = { credits: credits };
+  let template = path.join(__dirname, 'views', 'credits.ejs');
+  ejs.renderFile(template, data, function (err, html) {
+    if (err) throw err;
+    document.getElementById('credits').innerHTML = html;
+  });
+};
 
 let updateBalancesView = (balances) => {
   let data = { balances: balances };
@@ -73,11 +88,6 @@ let updateBalancesView = (balances) => {
     document.getElementById('balances').innerHTML = html;
   });
 };
-
-ipcRenderer.on('balances-loaded', (event, balances) => {
-  console.log('balances-loaded balances = %s', JSON.stringify(balances));
-  updateBalancesView(balances);
-});
 
 let updateFooter = () => {
   let time = moment().format('h:mm a');
@@ -89,7 +99,23 @@ let updateFooter = () => {
   });
 };
 
+ipcRenderer.on('dashboard-loaded', (event, coin, dashboard) => {
+  console.log('dashboard-loaded coin = %s, dashboard = %s', coin, JSON.stringify(dashboard));
+  updateDashboardView(dashboard, coin);
+  updateCreditsView(dashboard);
+});
+
+ipcRenderer.on('balances-loaded', (event, balances) => {
+  console.log('balances-loaded balances = %s', JSON.stringify(balances));
+  updateBalancesView(balances);
+});
+
 ipcRenderer.on('update-complete', (event) => {
   console.log('update complete');
   updateFooter();
+});
+
+ipcRenderer.on('on-error', (event, error) => {
+  console.error('on-error', error);
+  // TODO
 });

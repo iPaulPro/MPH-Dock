@@ -229,3 +229,11 @@ td a:hover {
 .hint {
     color: #cccccc;
 }
+
+.tab-item {
+    text-transform: capitalize;
+}
+
+#balances, #workers, #credits {
+    display: none;
+}

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./vendor/css/photon.css" media="screen" charset="utf-8">
     <link rel="stylesheet" href="./index.css" media="screen" charset="utf-8">
     <script charset="utf-8">require('./index')</script>
+    <script charset="utf-8">require('./vendor/js/tabs')</script>
 </head>
 <body>
 
@@ -19,7 +20,14 @@
     <div class="window-content">
         <div class="container">
             <div id="dashboard" class="row padded padded-top-more"></div>
+            <div class="tab-group">
+                <div class="tab-item active">BALANCES</div>
+                <div class="tab-item">WORKERS</div>
+                <div class="tab-item">CREDITS</div>
+            </div>
             <div id="balances" class="row pull-left"></div>
+            <div id="workers" class="row pull-left"></div>
+            <div id="credits" class="row pull-left"></div>
         </div>
     </div>
 

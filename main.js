@@ -131,7 +131,7 @@ const toggleWindow = (event, bounds) => {
   }
 };
 
-function update() {
+let update = () => {
   let stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
   if (constants.DEBUG) console.log('update : stats=', JSON.stringify(stats));
 
@@ -152,20 +152,24 @@ function update() {
   }).then( (balances) => {
     if (constants.DEBUG) console.log('update : balances =', JSON.stringify(balances));
 
-    let data = _.chain(balances.getuserallbalances.data)
-      .map((balance) => {
-        balance.coin = _.find(coins, (coin) => {
-          return balance.coin === coin.name;
-        });
-        return balance;
-      })
-      .sortBy((balance) => {
-        return balance.coin.code
-      })
-      .sortBy((balance) => {
-        return balance.coin.code !== constants.AUTO_EXCHANGE
-      })
-      .value();
+    let data = balances.getuserallbalances.data;
+
+    try {
+      data = _.chain(balances.getuserallbalances.data)
+        .map((balance) => {
+          balance.coin = _.find(coins, (coin) => {
+            return balance.coin === coin.name;
+          });
+          return balance;
+        })
+        .sortBy((balance) => {
+          return balance.coin.code;
+        })
+        .sortBy((balance) => {
+          return balance.coin.code !== constants.AUTO_EXCHANGE
+        })
+        .value();
+    } catch (e) {}
 
     window.webContents.send('balances-loaded', data);
 
@@ -177,7 +181,7 @@ function update() {
     window.webContents.send("on-error", { error: error });
     if (constants.DEBUG) console.error(error);
   });
-}
+};
 
 ipcMain.on('update', (event) => {
   if (constants.DEBUG) console.log('on update');

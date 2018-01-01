@@ -1,0 +1,56 @@
+{
+	"getuserallbalances": {
+		"version": "1.0.0",
+		"runtime": 3.7879943847656,
+		"data": [
+			{
+				"coin": "groestlcoin",
+				"confirmed": 0,
+				"unconfirmed": 0,
+				"ae_confirmed": 0,
+				"ae_unconfirmed": 0.02697596,
+				"exchange": 0
+			},
+			{
+				"coin": "ethereum",
+				"confirmed": 0.00787538,
+				"unconfirmed": 0,
+				"ae_confirmed": 0,
+				"ae_unconfirmed": 0,
+				"exchange": 0
+			},
+			{
+				"coin": "zcash",
+				"confirmed": 0,
+				"unconfirmed": 0,
+				"ae_confirmed": 0.00019687,
+				"ae_unconfirmed": 0.0003619,
+				"exchange": 0.00054324
+			},
+			{
+				"coin": "monero",
+				"confirmed": 0,
+				"unconfirmed": 0,
+				"ae_confirmed": 0.00010843,
+				"ae_unconfirmed": 4.313e-05,
+				"exchange": 7.32e-06
+			},
+			{
+				"coin": "zencash",
+				"confirmed": 0,
+				"unconfirmed": 0,
+				"ae_confirmed": 0,
+				"ae_unconfirmed": 0.00742571,
+				"exchange": 0
+			},
+			{
+				"coin": "bitcoin-gold",
+				"confirmed": 0,
+				"unconfirmed": 0,
+				"ae_confirmed": 0,
+				"ae_unconfirmed": 0.00092993,
+				"exchange": 0
+			}
+		]
+	}
+}
