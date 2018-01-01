@@ -131,5 +131,6 @@ ipcRenderer.on('update-complete', (event) => {
 
 ipcRenderer.on('on-error', (event, error) => {
   console.error('on-error', error);
+  updateFooter();
   // TODO
 });

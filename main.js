@@ -142,6 +142,8 @@ let update = () => {
     if (constants.DEBUG) console.log('update : dashboard =', JSON.stringify(dashboard));
 
     let data = dashboard.getdashboarddata.data;
+    if (data.error) { return Promise.reject(data.error) }
+
     let balance = Number(data.balance.confirmed).toFixed(4);
 
     tray.setTitle(balance + " " + coin.code);
@@ -153,6 +155,7 @@ let update = () => {
     if (constants.DEBUG) console.log('update : balances =', JSON.stringify(balances));
 
     let data = balances.getuserallbalances.data;
+    if (data.error) { return Promise.reject(data.error) }
 
     try {
       data = _.chain(balances.getuserallbalances.data)
@@ -180,7 +183,6 @@ let update = () => {
   }).then( (workers) => {
 
     let data = workers.getuserworkers.data;
-
     if (data.error) { return Promise.reject(data.error) }
 
     window.webContents.send('workers-loaded', coin, data);
