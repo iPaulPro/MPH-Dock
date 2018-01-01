@@ -70,6 +70,18 @@ class Stats {
     // return Promise.resolve(dummyDashboards);
   }
 
+  /**
+   * Returns a Promise that resolves to the user's current active worker list
+   */
+  getWorkers() {
+    let url = `https://miningpoolhub.com/index.php?page=api&action=getuserworkers&api_key=${this.apiKey}`;
+    return fetch(url).then((response) => {
+      if (response.status !== 200) {
+        return Promise.reject(response.status);
+      }
+      return response.json();
+    });
+  }
 }
 
 module.exports = Stats;

@@ -89,6 +89,15 @@ let updateBalancesView = (balances) => {
   });
 };
 
+let updateWorkersView = (workers) => {
+  let data = { workers: workers };
+  let template = path.join(__dirname, 'views', 'workers.ejs');
+  ejs.renderFile(template, data, function (err, html) {
+    if (err) throw err;
+    document.getElementById('workers').innerHTML = html;
+  });
+};
+
 let updateFooter = () => {
   let time = moment().format('h:mm a');
   let data = {lastUpdate: time};
@@ -108,6 +117,11 @@ ipcRenderer.on('dashboard-loaded', (event, coin, dashboard) => {
 ipcRenderer.on('balances-loaded', (event, balances) => {
   console.log('balances-loaded balances = %s', JSON.stringify(balances));
   updateBalancesView(balances);
+});
+
+ipcRenderer.on('workers-loaded', (event, workers) => {
+  console.log('workers-loaded workers = %s', JSON.stringify(workers));
+  updateWorkersView(workers);
 });
 
 ipcRenderer.on('update-complete', (event) => {

@@ -132,10 +132,10 @@ const toggleWindow = (event, bounds) => {
 };
 
 let update = () => {
-  let stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
+  const stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
   if (constants.DEBUG) console.log('update : stats=', JSON.stringify(stats));
 
-  let coin = _.find(coins, (coin) => { return coin.code === constants.AUTO_EXCHANGE });
+  const coin = _.find(coins, (coin) => { return coin.code === constants.AUTO_EXCHANGE });
   if (constants.DEBUG) console.log('update : coin=', JSON.stringify(coin));
 
   stats.getDashboard(coin.name).then( (dashboard) => {
@@ -175,11 +175,23 @@ let update = () => {
 
   }).then( () => {
 
+    return stats.getWorkers();
+
+  }).then( (workers) => {
+
+    let data = workers.getuserworkers.data;
+
+    if (data.error) { return Promise.reject(data.error) }
+
+    window.webContents.send('workers-loaded', coin, data);
+
+  }).then( () => {
+
     window.webContents.send('update-complete');
 
   }).catch( (error) => {
+    if (constants.DEBUG) console.error("update : ", error);
     window.webContents.send("on-error", { error: error });
-    if (constants.DEBUG) console.error(error);
   });
 };
 
