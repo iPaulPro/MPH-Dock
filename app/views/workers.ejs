@@ -1,16 +1,16 @@
 <table class="table-striped">
   <thead>
   <tr>
-    <th>Date</th>
-    <th>Amount</th>
+    <th>Coin</th>
+    <th>Hashrate</th>
   </tr>
   </thead>
   <tbody>
-  <% for (let worker of workers) { %>
-  <tr>
-    <td><%= worker.coin %></td>
-    <td><%= worker.worker_data %></td>
-  </tr>
-  <% } %>
+    <% for (let worker of workers) { %>
+      <tr>
+        <td><%= worker.coin %></td>
+        <td><%= worker.hashrate %></td>
+      </tr>
+    <% } %>
   </tbody>
 </table>

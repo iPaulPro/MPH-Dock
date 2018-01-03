@@ -1,6 +1,6 @@
 [
   {
-    "name": "adzciub",
+    "name": "adzcoin",
     "code": "ADZ",
     "min_payout": "0.012"
   },
@@ -42,7 +42,7 @@
   {
     "name": "ethereum",
     "code": "ETH",
-    "min_payout": "0.01"
+    "min_payout": "0.0109"
   },
   {
     "name": "ethereum-classic",

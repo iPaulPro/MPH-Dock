@@ -1,0 +1,33 @@
+<form id="setup-form">
+  <div class="form-group">
+    <label>API Key</label>
+    <input class="form-control" placeholder="Enter your MPH API Key" name="apiKey" value="<%= apiKey ? apiKey : '' %>">
+  </div>
+  <div class="form-group">
+    <label>Auto Exchange</label>
+    <label>
+      <select class="form-control" name="autoExchange">
+        <% for (let coin of coins) { %>
+          <option <%= coin.code === autoExchange ? 'selected' : '' %> ><%= coin.code %></option>
+        <% } %>
+      </select>
+    </label>
+  </div>
+  <div class="form-group">
+    <label>Refresh interval</label>
+    <label>
+      <select class="form-control" name="refreshInterval">
+        <option <%= refreshInterval === 1 ? 'selected' : '' %> value="1">1 min</option>
+        <option <%= refreshInterval === 2 ? 'selected' : '' %> value="2">2 min</option>
+        <option <%= refreshInterval === 5 ? 'selected' : '' %> value="5">5 min</option>
+        <option <%= refreshInterval === 10 ? 'selected' : '' %> value="10">10 min</option>
+        <option <%= refreshInterval === 30 ? 'selected' : '' %> value="30">30 min</option>
+        <option <%= refreshInterval === 60 ? 'selected' : '' %> value="60">60 min</option>
+      </select>
+    </label>
+  </div>
+  <div class="form-actions pull-right">
+    <button id="setup-cancel" type="submit" class="btn btn-form btn-negative js-setup-cancel-action">CANCEL</button>
+    <button type="submit" class="btn btn-form btn-primary">OK</button>
+  </div>
+</form>

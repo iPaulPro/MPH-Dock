@@ -58,9 +58,7 @@ class Stats {
    * @param coin The coin to retrieve dashboard statistics for.
    */
   getDashboard(coin) {
-    if (!coin) { coin = this.autoExchange }
-
-    const url = `https://${coin}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${this.apiKey}`;
+    const url = `https://${coin.name}.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=${this.apiKey}`;
     return fetch(url).then((response) => {
       if (response.status !== 200) {
         return Promise.reject(response.status);
@@ -73,15 +71,33 @@ class Stats {
   /**
    * Returns a Promise that resolves to the user's current active worker list
    */
-  getWorkers() {
-    let url = `https://miningpoolhub.com/index.php?page=api&action=getuserworkers&api_key=${this.apiKey}`;
-    return fetch(url).then((response) => {
-      if (response.status !== 200) {
-        return Promise.reject(response.status);
-      }
-      return response.json();
+  getWorkers(coins) {
+    let workers = [];
+    let promises = [];
+    for (let coin of coins) {
+      let url = `https://${coin.name}.miningpoolhub.com/index.php?page=api&action=getuserworkers&api_key=${this.apiKey}`;
+      let p = fetch(url).then( (response) => {
+        if (response.status !== 200) {
+          return Promise.reject(response.status);
+        }
+        console.log('getWorkers response', JSON.stringify(response));
+
+        let data = response.getuserworkers.data;
+        if (data.error) { return Promise.reject(data.error) }
+
+        console.log('getWorkers : worker', JSON.stringify(data));
+        if (data.hashrate !== 0) {
+          workers.push(data[0]);
+        }
+      });
+      promises.push(p);
+    }
+
+    return Promise.all(promises).then( () => {
+      return Promise.resolve(workers)
     });
   }
+
 }
 
 module.exports = Stats;

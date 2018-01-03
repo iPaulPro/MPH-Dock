@@ -80,26 +80,37 @@
 }
 
 .tab-group {
-    border-top: 1px solid rgba(255, 255, 255, 0);
+    border-top: none;
     border-bottom: none;
 }
 
 .tab-item {
     background: black;
-    font-size: 14px;
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+    border-left: 1px solid #333333;
     transition: 0.2s;
-    color: white;
+    color: #999999;
 }
 
 .tab-item:hover {
+    color: white;
     background: #171717;
 }
 
 .tab-item.active {
+    color: white;
     background: black;
     border-bottom: 1px solid white;
+}
+
+.form-control {
+    padding: 5px 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    background-color: #333333;
+    border: 1px solid #666666;
+    border-radius: 4px;
+    outline: none;
 }
 
 table {
@@ -234,6 +245,6 @@ td a:hover {
     text-transform: capitalize;
 }
 
-#balances, #workers, #credits {
+#setup, #main, #balances, #workers, #credits {
     display: none;
 }

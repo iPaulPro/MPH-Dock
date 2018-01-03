@@ -2,50 +2,74 @@
 
 const {ipcRenderer, shell} = require('electron');
 
+const POSITION_BALANCES = 0;
+// const POSITION_WORKERS = POSITION_BALANCES + 1;
+const POSITION_CREDITS = POSITION_BALANCES + 1;
+
 const path = require("path")
   , ejs = require('ejs')
   , moment = require('moment');
 
-let timer;
+let timer
+  , refreshInterval;
 
-let update = () => {
+let sendSetupRequest = () => {
+  console.log('sendSetupRequest');
+  ipcRenderer.send('setup');
+};
+
+let sendUpdateRequest = () => {
   ipcRenderer.send('update');
 };
 
-/**
- * Refresh every 10 minutes
- */
 let setRefreshTimer = () => {
+  if (!refreshInterval) { return; }
   if (timer) { clearInterval(timer) }
 
-  const interval = 10 * 60 * 1000;
-  timer = setInterval(update, interval);
+  const interval = refreshInterval * 60 * 1000; // minutes
+  timer = setInterval(sendUpdateRequest, interval);
 };
 
-let init = () => {
-  console.log('init');
-
+let setupTabs = () => {
   let tabs = document.getElementsByClassName("tab-group")[0];
   let balances = document.getElementById('balances');
-  let workers = document.getElementById('workers');
+  // let workers = document.getElementById('workers');
   let credits = document.getElementById('credits');
 
   balances.style.display = "inherit";
 
   tabs.addEventListener("tabActivate", (event) => {
     let position = event.detail.tabPosition;
-
-    balances.style.display = position === 0 ? "inherit" : "none";
-    workers.style.display = position === 1 ? "inherit" : "none";
-    credits.style.display = position === 2 ? "inherit" : "none";
+    balances.style.display = position === POSITION_BALANCES ? "inherit" : "none";
+    // workers.style.display = position === POSITION_WORKERS ? "inherit" : "none";
+    credits.style.display = position === POSITION_CREDITS ? "inherit" : "none";
   }, false);
+};
 
+let init = () => {
+  console.log('init', JSON.stringify(new Date()));
+
+  setupTabs();
   setRefreshTimer();
-  update();
+  sendUpdateRequest();
 };
 
 // Update when loaded
 document.addEventListener('DOMContentLoaded', init);
+
+let showSetup = () => {
+  let setupDiv = document.getElementById('setup');
+  setupDiv.style.display = "inherit";
+
+  document.getElementById('main').style.display = "none";
+
+  return setupDiv;
+};
+
+let showMain = () => {
+  document.getElementById('setup').style.display = "none";
+  document.getElementById('main').style.display = "inherit";
+};
 
 document.addEventListener('click', (event) => {
   console.log('click');
@@ -55,7 +79,11 @@ document.addEventListener('click', (event) => {
     event.preventDefault();
   } else if (event.target.classList.contains('js-refresh-action')) {
     setRefreshTimer();
-    update();
+    sendUpdateRequest();
+  } else if (event.target.classList.contains('js-settings-action')) {
+    sendSetupRequest();
+  } else if (event.target.classList.contains('js-setup-cancel-action')) {
+    showMain();
   } else if (event.target.classList.contains('js-quit-action')) {
     window.close();
   }
@@ -108,8 +136,41 @@ let updateFooter = () => {
   });
 };
 
+let saveSetup = (form) => {
+  let apiKey = form.apiKey.value;
+  let autoExchange = form.autoExchange.value;
+  refreshInterval = Number(form.refreshInterval.value);
+
+  ipcRenderer.send('save-setup', apiKey, autoExchange, refreshInterval);
+
+  setRefreshTimer();
+};
+
+let updateSetup = (data) => {
+  refreshInterval = data.refreshInterval;
+
+  let template = path.join(__dirname, 'views', 'setup.ejs');
+  ejs.renderFile(template, data, function (err, html) {
+    if (err) throw err;
+
+    let setupDiv = showSetup();
+    setupDiv.innerHTML = html;
+
+    let form = document.getElementById('setup-form');
+    form.addEventListener('submit', function(evt){
+      evt.preventDefault();
+      saveSetup(form);
+    });
+  });
+};
+
+ipcRenderer.on('setup-loaded', (event, data) => {
+  console.log('setup-loaded', JSON.stringify(data));
+  updateSetup(data);
+});
+
 ipcRenderer.on('dashboard-loaded', (event, coin, dashboard) => {
-  console.log('dashboard-loaded coin = %s, dashboard = %s', coin, JSON.stringify(dashboard));
+  console.log('dashboard-loaded coin = %s, dashboard = %s', JSON.stringify(coin), JSON.stringify(dashboard));
   updateDashboardView(dashboard, coin);
   updateCreditsView(dashboard);
 });
@@ -127,10 +188,12 @@ ipcRenderer.on('workers-loaded', (event, workers) => {
 ipcRenderer.on('update-complete', (event) => {
   console.log('update complete');
   updateFooter();
+  showMain();
 });
 
 ipcRenderer.on('on-error', (event, error) => {
   console.error('on-error', error);
   updateFooter();
+  showMain();
   // TODO
 });

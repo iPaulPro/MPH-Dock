@@ -10,12 +10,15 @@ const _ = require('underscore')
   , path = require('path')
   , ejs = require('ejs')
   , AutoLaunch = require('auto-launch')
+  , electronSettings = require('electron-settings')
+  , Settings = require('./app/data/settings')
   , Stats = require('./app/data/stats')
   , coins = require('./app/data/coins.json')
   , constants = require('./app/data/constants');
 
 let tray = undefined;
 let window = undefined;
+let settings = new Settings(electronSettings);
 
 let init = () => {
   let appPath = app.getPath('exe').split('.app/Content')[0] + '.app';
@@ -42,33 +45,17 @@ let init = () => {
 
 init();
 
-app.on('ready', () => {
-  if (constants.DEBUG) console.log('ready : coins = %s, constants = %s', JSON.stringify(coins), JSON.stringify(constants));
-
-  createTray();
-  createWindow();
-});
-
-// Quit the app when the window is closed
-app.on('window-all-closed', () => {
-  app.quit();
-});
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (window === null) {
-    createWindow()
-  }
-});
-
 const createTray = () => {
   let assetsDirectory = path.join(__dirname, 'assets');
+
   tray = new Tray(path.join(assetsDirectory, 'ic_miner.png'));
   tray.on('click', toggleWindow);
-  tray.on('right-click', () => {
-    if (constants.DEBUG) { window.webContents.openDevTools() }
-  });
+
+  if (constants.DEBUG) {
+    tray.on('double-click', () => {
+      window.webContents.openDevTools()
+    });
+  }
 };
 
 const createWindow = () => {
@@ -81,7 +68,7 @@ const createWindow = () => {
     resizable: false,
     transparent: true,
     webPreferences: {
-      // Prevents renderer process code from not running when window is hidden
+      // Allows renderer process to run when window is hidden
       backgroundThrottling: false
     }
   });
@@ -103,6 +90,26 @@ const createWindow = () => {
     tray.setHighlightMode('never')
   });
 };
+
+app.on('ready', () => {
+  if (constants.DEBUG) console.log('ready : coins = %s, constants = %s', JSON.stringify(coins), JSON.stringify(constants));
+
+  createTray();
+  createWindow();
+});
+
+// Quit the app when the window is closed
+app.on('window-all-closed', () => {
+  app.quit();
+});
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (window === null) {
+    createWindow()
+  }
+});
 
 const getWindowPosition = (trayBounds) => {
   const windowBounds = window.getBounds();
@@ -131,14 +138,33 @@ const toggleWindow = (event, bounds) => {
   }
 };
 
+let setup = () => {
+  let data = {
+    coins: coins,
+    apiKey: settings.getApiKey(),
+    autoExchange: settings.getAutoExchange(),
+    refreshInterval: settings.getRefreshInterval()
+  };
+  console.log('setup : sending', JSON.stringify(data));
+  window.webContents.send('setup-loaded', data);
+};
+
 let update = () => {
-  const stats = new Stats(constants.API_KEY, constants.FIAT, constants.AUTO_EXCHANGE);
+  let apiKey = settings.getApiKey();
+  let autoExchange = settings.getAutoExchange();
+
+  if (!apiKey) {
+    setup();
+    return;
+  }
+
+  const stats = new Stats(apiKey, constants.FIAT, autoExchange);
   if (constants.DEBUG) console.log('update : stats=', JSON.stringify(stats));
 
-  const coin = _.find(coins, (coin) => { return coin.code === constants.AUTO_EXCHANGE });
+  const coin = _.find(coins, (coin) => { return coin.code === autoExchange });
   if (constants.DEBUG) console.log('update : coin=', JSON.stringify(coin));
 
-  stats.getDashboard(coin.name).then( (dashboard) => {
+  stats.getDashboard(coin).then( (dashboard) => {
     if (constants.DEBUG) console.log('update : dashboard =', JSON.stringify(dashboard));
 
     let data = dashboard.getdashboarddata.data;
@@ -169,23 +195,24 @@ let update = () => {
           return balance.coin.code;
         })
         .sortBy((balance) => {
-          return balance.coin.code !== constants.AUTO_EXCHANGE
+          return balance.coin.code !== autoExchange;
         })
         .value();
     } catch (e) {}
 
     window.webContents.send('balances-loaded', data);
 
-  }).then( () => {
-
-    return stats.getWorkers();
-
-  }).then( (workers) => {
-
-    let data = workers.getuserworkers.data;
-    if (data.error) { return Promise.reject(data.error) }
-
-    window.webContents.send('workers-loaded', coin, data);
+  // }).then( () => {
+  //
+  //   return stats.getWorkers(coins);
+  //
+  // }).then( (workers) => {
+  //   if (constants.DEBUG) console.log('update : workers =', JSON.stringify(workers));
+  //
+  //   let data = workers.getuserworkers.data;
+  //   if (data.error) { return Promise.reject(data.error) }
+  //
+  //   window.webContents.send('workers-loaded', data);
 
   }).then( () => {
 
@@ -197,7 +224,21 @@ let update = () => {
   });
 };
 
+ipcMain.on('setup', (event) => {
+  if (constants.DEBUG) console.log('on setup', JSON.stringify(new Date()));
+  setup();
+});
+
 ipcMain.on('update', (event) => {
-  if (constants.DEBUG) console.log('on update');
+  if (constants.DEBUG) console.log('on update', JSON.stringify(new Date()));
+  update();
+});
+
+ipcMain.on('save-setup', (event, apiKey, autoExchange, refreshInterval) => {
+  if (constants.DEBUG) console.log('saveSetup : apiKey = %s, autoExchange = %s, refresh = %s', apiKey, autoExchange, refreshInterval);
+  settings.setApiKey(apiKey);
+  settings.setAutoExchange(autoExchange);
+  settings.setRefreshInterval(refreshInterval);
+
   update();
 });
