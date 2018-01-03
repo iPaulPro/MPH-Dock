@@ -2,9 +2,8 @@
 
 const {ipcRenderer, shell} = require('electron');
 
-const POSITION_BALANCES = 0;
-// const POSITION_WORKERS = POSITION_BALANCES + 1;
-const POSITION_CREDITS = POSITION_BALANCES + 1;
+const POSITION_BALANCES = 0
+  , POSITION_CREDITS = POSITION_BALANCES + 1;
 
 const path = require("path")
   , ejs = require('ejs')
@@ -33,16 +32,14 @@ let setRefreshTimer = () => {
 let setupTabs = () => {
   let tabs = document.getElementsByClassName("tab-group")[0];
   let balances = document.getElementById('balances');
-  // let workers = document.getElementById('workers');
   let credits = document.getElementById('credits');
 
-  balances.style.display = "inherit";
+  balances.style.display = "block";
 
   tabs.addEventListener("tabActivate", (event) => {
     let position = event.detail.tabPosition;
-    balances.style.display = position === POSITION_BALANCES ? "inherit" : "none";
-    // workers.style.display = position === POSITION_WORKERS ? "inherit" : "none";
-    credits.style.display = position === POSITION_CREDITS ? "inherit" : "none";
+    balances.style.display = position === POSITION_BALANCES ? "block" : "none";
+    credits.style.display = position === POSITION_CREDITS ? "block" : "none";
   }, false);
 };
 
@@ -59,16 +56,18 @@ document.addEventListener('DOMContentLoaded', init);
 
 let showSetup = () => {
   let setupDiv = document.getElementById('setup');
-  setupDiv.style.display = "inherit";
+  setupDiv.style.display = "block";
 
   document.getElementById('main').style.display = "none";
+  document.getElementById('footer').style.display = "none";
 
   return setupDiv;
 };
 
 let showMain = () => {
   document.getElementById('setup').style.display = "none";
-  document.getElementById('main').style.display = "inherit";
+  document.getElementById('main').style.display = "block";
+  document.getElementById('footer').style.display = "block";
 };
 
 document.addEventListener('click', (event) => {

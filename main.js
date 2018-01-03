@@ -46,7 +46,7 @@ let init = () => {
 init();
 
 const createTray = () => {
-  let assetsDirectory = path.join(__dirname, 'assets');
+  let assetsDirectory = path.join(__dirname, 'app', 'assets');
 
   tray = new Tray(path.join(assetsDirectory, 'ic_miner.png'));
   tray.on('click', toggleWindow);
@@ -143,7 +143,8 @@ let setup = () => {
     coins: coins,
     apiKey: settings.getApiKey(),
     autoExchange: settings.getAutoExchange(),
-    refreshInterval: settings.getRefreshInterval()
+    refreshInterval: settings.getRefreshInterval(),
+    version: process.env.npm_package_version
   };
   console.log('setup : sending', JSON.stringify(data));
   window.webContents.send('setup-loaded', data);
@@ -201,18 +202,6 @@ let update = () => {
     } catch (e) {}
 
     window.webContents.send('balances-loaded', data);
-
-  // }).then( () => {
-  //
-  //   return stats.getWorkers(coins);
-  //
-  // }).then( (workers) => {
-  //   if (constants.DEBUG) console.log('update : workers =', JSON.stringify(workers));
-  //
-  //   let data = workers.getuserworkers.data;
-  //   if (data.error) { return Promise.reject(data.error) }
-  //
-  //   window.webContents.send('workers-loaded', data);
 
   }).then( () => {
 

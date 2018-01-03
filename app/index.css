@@ -148,6 +148,10 @@ td:last-child {
     border-right: 0;
 }
 
+a {
+    cursor: pointer;
+}
+
 td a {
     display: block;
     color: inherit;
@@ -157,6 +161,14 @@ td a {
 
 td a:hover {
     color: #5bd46d;
+}
+
+label {
+    color: #cccccc;
+}
+
+select {
+    color: white;
 }
 
 .container {
@@ -171,15 +183,6 @@ td a:hover {
 
 .table-striped tr:nth-child(even) {
     background-color: #222222;
-}
-
-.summary {
-    width: 100%;
-    text-align: center;
-    margin: 16px auto auto;
-    font-size: var(--font-size);
-    font-weight: 300;
-    color: var(--text-color);
 }
 
 #footer-link {
@@ -247,4 +250,15 @@ td a:hover {
 
 #setup, #main, #balances, #workers, #credits {
     display: none;
+}
+
+#setup a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #6db3fd;
+}
+
+#setup a:hover {
+    text-decoration: underline;
+    color: white;
 }
