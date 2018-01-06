@@ -1,8 +1,6 @@
 "use strict";
 
-const fetch = require('node-fetch')
-  , dummyBalances = require('./dummy/getuserallbanaces')
-  , dummyDashboards = require('./dummy/getdashboarddata');
+const fetch = require('node-fetch');
 
 /**
  * Main model for accessing Multi Pool Miner data
@@ -50,7 +48,6 @@ class Stats {
       }
       return response.json();
     });
-    // return Promise.resolve(dummyBalances);
   }
 
   /**
@@ -65,7 +62,6 @@ class Stats {
       }
       return response.json();
     });
-    // return Promise.resolve(dummyDashboards);
   }
 
   /**
