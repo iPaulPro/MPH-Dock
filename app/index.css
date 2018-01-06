@@ -74,7 +74,7 @@
 }
 
 .window-content {
-    width: 360px;
+    width: 100%;
     background-color: black;
     overflow: auto;
 }
@@ -242,6 +242,10 @@ select {
 
 .hint {
     color: #cccccc;
+}
+
+#balances .hint {
+    font-size: 10px;
 }
 
 .tab-item {

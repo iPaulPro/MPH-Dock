@@ -39,8 +39,10 @@ let init = () => {
     .catch(function (err) {
     });
 
-  // Don't show the app in the dock
-  app.dock.hide();
+  if (app.dock) {
+    // Don't show the app in the dock
+    app.dock.hide();
+  }
 };
 
 init();
@@ -48,7 +50,7 @@ init();
 const createTray = () => {
   let assetsDirectory = path.join(__dirname, 'app', 'assets');
 
-  tray = new Tray(path.join(assetsDirectory, 'ic_miner.png'));
+  tray = new Tray(path.join(assetsDirectory, 'iconTemplate.png'));
   tray.on('click', toggleWindow);
 
   if (constants.DEBUG) {
@@ -60,8 +62,8 @@ const createTray = () => {
 
 const createWindow = () => {
   window = new BrowserWindow({
-    width: 360,
-    height: 450,
+    width: 376,
+    height: 496,
     show: false,
     frame: false,
     fullscreenable: false,
@@ -150,6 +152,19 @@ let setup = () => {
   window.webContents.send('setup-loaded', data);
 };
 
+let addCoinToBalance = (balance) => {
+  balance.coin = _.find(coins, (coin) => { return balance.coin === coin.name });
+
+  const maxDigits = 8;
+  balance.confirmed = balance.confirmed === 0 ? balance.confirmed : Number(balance.confirmed).toFixed(maxDigits);
+  balance.unconfirmed = balance.unconfirmed === 0 ? balance.unconfirmed : Number(balance.unconfirmed).toFixed(maxDigits);
+  balance.ae_confirmed = balance.ae_confirmed === 0 ? balance.ae_confirmed : Number(balance.ae_confirmed).toFixed(maxDigits);
+  balance.ae_unconfirmed = balance.ae_unconfirmed === 0 ? balance.ae_unconfirmed : Number(balance.ae_unconfirmed).toFixed(maxDigits);
+  balance.exchange = balance.exchange === 0 ? balance.exchange : Number(balance.exchange).toFixed(maxDigits);
+
+  return balance;
+};
+
 let update = () => {
   let apiKey = settings.getApiKey();
   let autoExchange = settings.getAutoExchange();
@@ -186,18 +201,9 @@ let update = () => {
 
     try {
       data = _.chain(balances.getuserallbalances.data)
-        .map((balance) => {
-          balance.coin = _.find(coins, (coin) => {
-            return balance.coin === coin.name;
-          });
-          return balance;
-        })
-        .sortBy((balance) => {
-          return balance.coin.code;
-        })
-        .sortBy((balance) => {
-          return balance.coin.code !== autoExchange;
-        })
+        .map(addCoinToBalance)
+        .sortBy((balance) => { return balance.coin.code })
+        .sortBy((balance) => { return balance.coin.code !== autoExchange })
         .value();
     } catch (e) {}
 
