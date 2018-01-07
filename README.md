@@ -7,7 +7,7 @@
 
 <br>
 
-The app sits in the top menu bar and shows the account balance of the auto-exchange coin. A full balance breakdown of all coins is shown upon selection.
+The app sits in the top menu bar and shows the account balance of your auto-exchange coin. A full balance breakdown of all coins is shown upon selection.
 
 ![screenshot](https://i.imgur.com/yQmDxZd.jpg)
 
@@ -51,7 +51,7 @@ open out/MPH-Dock-darwin-x64/MPH Dock.app
 Currently only Mac OS is supported, and the app is geared toward Mining Pool Hub Auto Exchange users.
 
 Plans include: 
-- Better support for users that have use Auto Exchange enabled
+- Better support for users that don't use Auto Exchange
 - Look into Windows support
 - Add tab for Worker stats
 - Provide choices for menu bar display
