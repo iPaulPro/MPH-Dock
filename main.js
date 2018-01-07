@@ -14,7 +14,7 @@ const _ = require('underscore')
   , Settings = require('./app/data/settings')
   , Stats = require('./app/data/stats')
   , coins = require('./app/assets/coins.json')
-  , constants = require('./app/config');
+  , config = require('./app/config');
 
 let tray = undefined;
 let window = undefined;
@@ -53,7 +53,7 @@ const createTray = () => {
   tray = new Tray(path.join(assetsDirectory, 'iconTemplate.png'));
   tray.on('click', toggleWindow);
 
-  if (constants.DEBUG) {
+  if (config.DEBUG) {
     tray.on('double-click', () => {
       window.webContents.openDevTools()
     });
@@ -94,7 +94,7 @@ const createWindow = () => {
 };
 
 app.on('ready', () => {
-  if (constants.DEBUG) console.log('ready : coins = %s, constants = %s', JSON.stringify(coins), JSON.stringify(constants));
+  if (config.DEBUG) console.log('ready : coins = %s, constants = %s', JSON.stringify(coins), JSON.stringify(config));
 
   createTray();
   createWindow();
@@ -148,7 +148,6 @@ let setup = () => {
     refreshInterval: settings.getRefreshInterval(),
     version: process.env.npm_package_version
   };
-  console.log('setup : sending', JSON.stringify(data));
   window.webContents.send('setup-loaded', data);
 };
 
@@ -174,14 +173,14 @@ let update = () => {
     return;
   }
 
-  const stats = new Stats(apiKey, constants.FIAT, autoExchange);
-  if (constants.DEBUG) console.log('update : stats=', JSON.stringify(stats));
+  const stats = new Stats(apiKey, config.FIAT, autoExchange);
+  if (config.DEBUG) console.log('update : stats=', JSON.stringify(stats));
 
   const coin = _.find(coins, (coin) => { return coin.code === autoExchange });
-  if (constants.DEBUG) console.log('update : coin=', JSON.stringify(coin));
+  if (config.DEBUG) console.log('update : coin=', JSON.stringify(coin));
 
   stats.getDashboard(coin).then( (dashboard) => {
-    if (constants.DEBUG) console.log('update : dashboard =', JSON.stringify(dashboard));
+    if (config.DEBUG) console.log('update : dashboard =', JSON.stringify(dashboard));
 
     let data = dashboard.getdashboarddata.data;
     if (data.error) { return Promise.reject(data.error) }
@@ -203,7 +202,7 @@ let update = () => {
     return stats.getUserBalances();
 
   }).then( (balances) => {
-    if (constants.DEBUG) console.log('update : balances =', JSON.stringify(balances));
+    if (config.DEBUG) console.log('update : balances =', JSON.stringify(balances));
 
     let data = balances.getuserallbalances.data;
     if (data.error) { return Promise.reject(data.error) }
@@ -223,23 +222,23 @@ let update = () => {
     window.webContents.send('update-complete');
 
   }).catch( (error) => {
-    if (constants.DEBUG) console.error("update : ", error);
+    if (config.DEBUG) console.error("update : ", error);
     window.webContents.send("on-error", { error: error });
   });
 };
 
 ipcMain.on('setup', (event) => {
-  if (constants.DEBUG) console.log('on setup', JSON.stringify(new Date()));
+  if (config.DEBUG) console.log('on setup', JSON.stringify(new Date()));
   setup();
 });
 
 ipcMain.on('update', (event) => {
-  if (constants.DEBUG) console.log('on update', JSON.stringify(new Date()));
+  if (config.DEBUG) console.log('on update', JSON.stringify(new Date()));
   update();
 });
 
 ipcMain.on('save-setup', (event, apiKey, autoExchange, refreshInterval) => {
-  if (constants.DEBUG) console.log('on save-setup : apiKey = %s, autoExchange = %s, refresh = %s', apiKey, autoExchange, refreshInterval);
+  if (config.DEBUG) console.log('on save-setup : apiKey = %s, autoExchange = %s, refresh = %s', apiKey, autoExchange, refreshInterval);
   settings.setApiKey(apiKey);
   settings.setAutoExchange(autoExchange);
   settings.setRefreshInterval(refreshInterval);
@@ -248,7 +247,7 @@ ipcMain.on('save-setup', (event, apiKey, autoExchange, refreshInterval) => {
 });
 
 ipcMain.on('toggle-average', (event) => {
-  if (constants.DEBUG) console.log('on toggle-average', JSON.stringify(new Date()));
+  if (config.DEBUG) console.log('on toggle-average', JSON.stringify(new Date()));
   let showWeekAverage = settings.getShowWeekAverage();
   settings.setShowWeekAverage(!showWeekAverage);
 
