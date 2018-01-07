@@ -15,7 +15,7 @@ git clone https://github.com/ipaulpro/mph-dock
 ```
 
 
-Edit `mph-dock/app/data/constants.js` to add your Mining Pool Hub API key, and specify the auto exchange coin you're currently using.
+Edit `mph-dock/app/data/config.js` to add your Mining Pool Hub API key, and specify the auto exchange coin you're currently using.
 
 ```javascript 1.6
 API_KEY: '', // Your Mining Pool Hub API key, found at https://miningpoolhub.com/?page=account&action=edit

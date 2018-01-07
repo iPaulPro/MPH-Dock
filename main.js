@@ -13,8 +13,8 @@ const _ = require('underscore')
   , electronSettings = require('electron-settings')
   , Settings = require('./app/data/settings')
   , Stats = require('./app/data/stats')
-  , coins = require('./app/data/coins.json')
-  , constants = require('./app/data/constants');
+  , coins = require('./app/assets/coins.json')
+  , constants = require('./app/config');
 
 let tray = undefined;
 let window = undefined;
@@ -67,7 +67,7 @@ const createWindow = () => {
     show: false,
     frame: false,
     fullscreenable: false,
-    resizable: false,
+    resizable: true,
     transparent: true,
     webPreferences: {
       // Allows renderer process to run when window is hidden
@@ -188,8 +188,17 @@ let update = () => {
 
     let balance = Number(data.balance.confirmed).toFixed(4);
 
+    let credits = data.recent_credits;
+    let total = 0;
+    for (let credit of credits) {
+      total += credit.amount;
+    }
+    data.creditAvg = total / credits.length;
+
+    let showWeekAverage = settings.getShowWeekAverage();
+
     tray.setTitle(balance + " " + coin.code);
-    window.webContents.send('dashboard-loaded', coin, data);
+    window.webContents.send('dashboard-loaded', coin, data, showWeekAverage);
 
     return stats.getUserBalances();
 
@@ -230,10 +239,19 @@ ipcMain.on('update', (event) => {
 });
 
 ipcMain.on('save-setup', (event, apiKey, autoExchange, refreshInterval) => {
-  if (constants.DEBUG) console.log('saveSetup : apiKey = %s, autoExchange = %s, refresh = %s', apiKey, autoExchange, refreshInterval);
+  if (constants.DEBUG) console.log('on save-setup : apiKey = %s, autoExchange = %s, refresh = %s', apiKey, autoExchange, refreshInterval);
   settings.setApiKey(apiKey);
   settings.setAutoExchange(autoExchange);
   settings.setRefreshInterval(refreshInterval);
 
   update();
 });
+
+ipcMain.on('toggle-average', (event) => {
+  if (constants.DEBUG) console.log('on toggle-average', JSON.stringify(new Date()));
+  let showWeekAverage = settings.getShowWeekAverage();
+  settings.setShowWeekAverage(!showWeekAverage);
+
+  update();
+});
+

@@ -1,10 +1,11 @@
 "use strict";
 
-const constants = require('./constants');
+const constants = require('../config');
 
 const KEY_API_KEY = 'api-key'
   , KEY_AUTO_EXCHANGE = 'auto-exchange'
-  , KEY_REFRESH_INTERVAL = 'refresh-interval';
+  , KEY_REFRESH_INTERVAL = 'refresh-interval'
+  , KEY_SHOW_WEEK_AVERAGE = 'show-week-average';
 
 class Settings {
 
@@ -24,6 +25,10 @@ class Settings {
     return this.settings.get(KEY_REFRESH_INTERVAL) || constants.REFRESH_INTERVAL;
   }
 
+  getShowWeekAverage() {
+    return this.settings.get(KEY_SHOW_WEEK_AVERAGE) || false;
+  }
+
   setApiKey(apiKey) {
     this.settings.set(KEY_API_KEY, apiKey);
   }
@@ -34,6 +39,10 @@ class Settings {
 
   setRefreshInterval(interval) {
     this.settings.set(KEY_REFRESH_INTERVAL, interval);
+  }
+
+  setShowWeekAverage(showWeekAvg) {
+    this.settings.set(KEY_SHOW_WEEK_AVERAGE, showWeekAvg);
   }
 
 }

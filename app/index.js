@@ -21,6 +21,10 @@ let sendUpdateRequest = () => {
   ipcRenderer.send('update');
 };
 
+let sendToggleAverageRequest = () => {
+  ipcRenderer.send('toggle-average');
+};
+
 let setRefreshTimer = () => {
   if (!refreshInterval) { return; }
   if (timer) { clearInterval(timer) }
@@ -71,25 +75,28 @@ let showMain = () => {
 };
 
 document.addEventListener('click', (event) => {
-  console.log('click');
+  let classList = event.target.classList;
+  console.log('click classList = %s', JSON.stringify(classList));
   if (event.target.href) {
     // Open links in external browser
     shell.openExternal(event.target.href);
     event.preventDefault();
-  } else if (event.target.classList.contains('js-refresh-action')) {
+  } else if (classList.contains('js-refresh-action')) {
     setRefreshTimer();
     sendUpdateRequest();
-  } else if (event.target.classList.contains('js-settings-action')) {
+  } else if (classList.contains('js-settings-action')) {
     sendSetupRequest();
-  } else if (event.target.classList.contains('js-setup-cancel-action')) {
+  } else if (classList.contains('js-setup-cancel-action')) {
     showMain();
-  } else if (event.target.classList.contains('js-quit-action')) {
+  } else if (classList.contains('js-quit-action')) {
     window.close();
+  } else if (classList.contains('js-average-action')) {
+    sendToggleAverageRequest();
   }
 });
 
-let updateDashboardView = (dashboard, coin) => {
-  let data = { dashboard: dashboard, coin: coin };
+let updateDashboardView = (dashboard, coin, showWeekAverage) => {
+  let data = { dashboard: dashboard, coin: coin, showWeekAverage: showWeekAverage };
   let template = path.join(__dirname, 'views', 'dashboard.ejs');
   ejs.renderFile(template, data, function (err, html) {
     if (err) throw err;
@@ -168,9 +175,9 @@ ipcRenderer.on('setup-loaded', (event, data) => {
   updateSetup(data);
 });
 
-ipcRenderer.on('dashboard-loaded', (event, coin, dashboard) => {
-  console.log('dashboard-loaded coin = %s, dashboard = %s', JSON.stringify(coin), JSON.stringify(dashboard));
-  updateDashboardView(dashboard, coin);
+ipcRenderer.on('dashboard-loaded', (event, coin, dashboard, showWeekAverage) => {
+  console.log('dashboard-loaded coin = %s, dashboard = %s, showWeekAverage = %s', JSON.stringify(coin), JSON.stringify(dashboard), JSON.stringify(showWeekAverage));
+  updateDashboardView(dashboard, coin, showWeekAverage);
   updateCreditsView(dashboard);
 });
 

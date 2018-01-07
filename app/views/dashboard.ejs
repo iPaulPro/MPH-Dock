@@ -4,6 +4,11 @@
   <div id="balance_label">Account balance</div>
 </div>
 <div id="column-right" class="pull-right">
-  <div id="today_label">Past 24 hours</div>
-  <div id="today"><%= Number(dashboard.recent_credits_24hours.amount).toFixed(8) %></div>
+  <% if (showWeekAverage) { %>
+    <div id="today_label" class="js-average-action">Avg. (past 2 weeks)</div>
+    <div id="today" class="js-average-action"><%= Number(dashboard.creditAvg).toFixed(8) %></div>
+  <% } else { %>
+    <div id="today_label" class="js-average-action">Past 24 hours</div>
+    <div id="today" class="js-average-action"><%= Number(dashboard.recent_credits_24hours.amount).toFixed(8) %></div>
+  <% } %>
 </div>

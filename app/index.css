@@ -227,17 +227,19 @@ select {
 }
 
 #column-left {
-    width: 70%;
+    width: 65%;
 }
 
 #column-right {
-    width: 30%;
+    width: 35%;
     text-align: right;
+    display: block;
 }
 
 #today_label {
     color: #cccccc;
-    font-size: 12px;
+    font-size: 10px;
+    padding-top: 4px;
 }
 
 .hint {
