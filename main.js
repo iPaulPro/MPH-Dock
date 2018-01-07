@@ -4,7 +4,7 @@ const fs = require('fs');
 if (fs.existsSync('.env')) require('dotenv').config();
 
 const electron = require('electron');
-const {app, BrowserWindow, ipcMain, Tray} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu, Tray} = require('electron');
 
 const _ = require('underscore')
   , path = require('path')
@@ -91,6 +91,28 @@ const createWindow = () => {
   window.on('hide', () => {
     tray.setHighlightMode('never')
   });
+
+  // Create the Application's main menu
+  let template = [{
+    label: "Application",
+    submenu: [
+      { label: "MPH Dock", selector: "orderFrontStandardAboutPanel:" },
+      { type: "separator" },
+      { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+    ]}, {
+    label: "Edit",
+    submenu: [
+      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+      { type: "separator" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+      { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+    ]}
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
 
 app.on('ready', () => {
@@ -146,7 +168,7 @@ let setup = () => {
     apiKey: settings.getApiKey(),
     autoExchange: settings.getAutoExchange(),
     refreshInterval: settings.getRefreshInterval(),
-    version: process.env.npm_package_version
+    version: app.getVersion()
   };
   window.webContents.send('setup-loaded', data);
 };
