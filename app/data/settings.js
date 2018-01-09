@@ -1,6 +1,6 @@
 "use strict";
 
-const constants = require('../config');
+const config = require('../config');
 
 const KEY_API_KEY = 'api-key'
   , KEY_AUTO_EXCHANGE = 'auto-exchange'
@@ -14,15 +14,15 @@ class Settings {
   }
 
   getApiKey() {
-    return this.settings.get(KEY_API_KEY) || constants.API_KEY;
+    return this.settings.get(KEY_API_KEY) || config.API_KEY;
   }
 
   getAutoExchange() {
-    return this.settings.get(KEY_AUTO_EXCHANGE) || constants.AUTO_EXCHANGE;
+    return this.settings.get(KEY_AUTO_EXCHANGE) || config.AUTO_EXCHANGE;
   }
 
   getRefreshInterval() {
-    return this.settings.get(KEY_REFRESH_INTERVAL) || constants.REFRESH_INTERVAL;
+    return this.settings.get(KEY_REFRESH_INTERVAL) || config.REFRESH_INTERVAL;
   }
 
   getShowWeekAverage() {
@@ -43,6 +43,16 @@ class Settings {
 
   setShowWeekAverage(showWeekAvg) {
     this.settings.set(KEY_SHOW_WEEK_AVERAGE, showWeekAvg);
+  }
+
+  toJSON() {
+    return {
+      apiKey: this.getApiKey(),
+      autoExchange: this.getAutoExchange(),
+      refreshInterval: this.getRefreshInterval(),
+      showWeekAverage: this.getShowWeekAverage()
+    }
+
   }
 
 }

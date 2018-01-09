@@ -18,14 +18,17 @@ let sendSetupRequest = () => {
 };
 
 let sendUpdateRequest = () => {
+  console.log('sendUpdateRequest');
   ipcRenderer.send('update');
 };
 
 let sendToggleAverageRequest = () => {
+  console.log('sendToggleAverageRequest');
   ipcRenderer.send('toggle-average');
 };
 
 let setRefreshTimer = () => {
+  console.log('setRefreshTimer at %s, interval = %s', new Date(), refreshInterval);
   if (!refreshInterval) { return; }
   if (timer) { clearInterval(timer) }
 
@@ -173,6 +176,12 @@ let updateSetup = (data) => {
 ipcRenderer.on('setup-loaded', (event, data) => {
   console.log('setup-loaded', JSON.stringify(data));
   updateSetup(data);
+});
+
+ipcRenderer.on('settings-loaded', (event, settings) => {
+  console.log('settings-loaded', JSON.stringify(settings));
+  refreshInterval = settings.refreshInterval;
+  setRefreshTimer();
 });
 
 ipcRenderer.on('dashboard-loaded', (event, coin, dashboard, showWeekAverage) => {
